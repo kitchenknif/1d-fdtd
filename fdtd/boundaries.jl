@@ -11,9 +11,9 @@ function pmc_boundary!(hy, pos=1)
     hy[pos] = 0
 end
 
-function trivial_abc!(ez, pos=1, right=true)
+function trivial_abc!(ez, hy, pos=1, right=true)
   if right
-    ez[pos] = ez[pos-1]
+    hy[pos] = hy[pos-1]
   else
     ez[pos] = ez[pos+1]
   end
