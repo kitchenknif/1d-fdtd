@@ -29,12 +29,16 @@ abcCoefRight = 0.0
 
 # function setup_first_order_abc(cezh, chye, pos, right=true)
 function setup_first_order_abc!(eps, mu, pos=200, right=true)
-    global abcCoefRight, abcCoefLeft
+    global abcCoefRight, prevValueRight
+    global abcCoefLeft, prevValueLeft
+
     if right
+        prevValueRight = 0.0
         temp = 1. / sqrt(mu[pos - 1] * eps[pos])
         #temp = sqrt(cezh[pos] * chye[pos])
         abcCoefRight = (temp - 1.0) / (temp + 1.0)
     else
+        prevValueLeft = 0.0
         temp = 1. / sqrt(mu[pos] * eps[pos])
         #temp = sqrt(cezh[pos] * chye[pos])
         abcCoefLeft = (temp - 1.0) / (temp + 1.0)
@@ -64,14 +68,10 @@ end
 # TFSF
 #
 
-function totalfield_scatteredfield_hy!(hy, incidentfield, pos=1)
-    ez_inc, hy_inc = incidentfield
-    hy[pos] -= hy_inc
-end
-
-function totalfield_scatteredfield_ez!(ez, incidentfield, pos=1, right=true)
-    ez_inc, hy_inc = incidentfield
-    ez[pos+1] += ez_inc
-end
+#function totalfield_scatteredfield!(ez, hy, eps, mu, incidentfield, pos=1, right=true)
+#    ez_inc, hy_inc = incidentfield
+#    hy[pos] -= hy_inc / globals.imp0 / mu[i]
+#    ez[pos+1] += ez_inc * globals.imp0 / eps[i+1]
+#end
 
 end

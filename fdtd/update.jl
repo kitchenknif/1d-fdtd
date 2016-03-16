@@ -10,7 +10,15 @@ export update_magnetic_field!
 # Vacuum
 #
 function update_magnetic_field!(ez, hy)
-    for i = 1:length(hy)
+
+    # Hack
+    size = length(hy)
+    if length(hy) == length(ez)
+        size -= 1
+    end
+    #
+    #
+    for i = 1:size
         hy[i] = hy[i] + (ez[i + 1] - ez[i]) / globals.imp0
     end
 end
