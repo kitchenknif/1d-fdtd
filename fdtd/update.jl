@@ -23,7 +23,7 @@ function update_magnetic_field!(ez, hy)
     end
 end
 function update_electric_field!(ez, hy)
-    for i = 2:length(ez)-1
+    for i = 2:length(ez)
         ez[i] = ez[i] + (hy[i] - hy[i-1]) * globals.imp0
     end
 end

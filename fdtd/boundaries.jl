@@ -22,56 +22,59 @@ function trivial_abc!(field, pos=200, right=true)
 end
 
 # Mur ABC, First order
-prevValueLeft = 0.0
-prevValueRight = 0.0
-abcCoefLeft = 0.0
-abcCoefRight = 0.0
 
-# function setup_first_order_abc(cezh, chye, pos, right=true)
-function setup_first_order_abc!(eps, mu, pos=200, right=true)
-    global abcCoefRight, prevValueRight
-    global abcCoefLeft, prevValueLeft
-
-    if right
-        prevValueRight = 0.0
-        temp = 1. / sqrt(mu[pos - 1] * eps[pos])
-        #temp = sqrt(cezh[pos] * chye[pos])
-        abcCoefRight = (temp - 1.0) / (temp + 1.0)
-    else
-        prevValueLeft = 0.0
-        temp = 1. / sqrt(mu[pos] * eps[pos])
-        #temp = sqrt(cezh[pos] * chye[pos])
-        abcCoefLeft = (temp - 1.0) / (temp + 1.0)
-    end
+type MurABCFirst
+    right::Bool
+    coef::Real
+    prev::Real
+    pos::Int
 end
 
-function first_order_diff_abc!(field, pos=200, right=true)
-    global abcCoefRight, prevValueRight
-    global abcCoefLeft, prevValueLeft
 
+function setup_first_order_abc(eps, mu, pos=200, right=true)
+    abc = MurABCFirst( right, 0.0, 0.0, pos);
     if right
-        field[pos] = prevValueRight + abcCoefRight * (field[pos - 1] - field[pos]);
-        prevValueRight = field[pos - 1];
+        temp = 1. / sqrt(mu[pos - 1] * eps[pos])
+        abc.coef = (temp - 1.0) / (temp + 1.0)
     else
-        field[pos] = prevValueLeft + abcCoefLeft * (field[pos + 1] - field[pos]);
-        prevValueLeft = field[pos + 1];
+        temp = 1. / sqrt(mu[pos] * eps[pos])
+        abc.coef = (temp - 1.0) / (temp + 1.0)
+    end
+    return abc
+end
+
+function first_order_diff_abc!(field, abc)
+    if abc.right
+        field[abc.pos] = abc.prev + abc.coef * (field[abc.pos - 1] - field[abc.pos]);
+        abc.prev = field[abc.pos - 1];
+    else
+        field[abc.pos] = abc.prev + abc.coef * (field[abc.pos + 1] - field[abc.pos]);
+        abc.prev = field[abc.pos + 1];
     end
 end
 
 #
 # CPML
 #
-
 ### TODO
+type CPML
+    right::Bool;
+end
+
+function setup_CPML()
+end
+
+function CPML(ez, hy, cpml)
+end
 
 #
 # TFSF
 #
 
-#function totalfield_scatteredfield!(ez, hy, eps, mu, incidentfield, pos=1, right=true)
-#    ez_inc, hy_inc = incidentfield
-#    hy[pos] -= hy_inc / globals.imp0 / mu[i]
-#    ez[pos+1] += ez_inc * globals.imp0 / eps[i+1]
-#end
+function totalfield_scatteredfield!(ez, hy, eps, mu, incident, pos=1)
+    ez_inc, hy_inc = incident;
+    hy[pos] -= hy_inc / globals.imp0;
+    ez[pos+1] += ez_inc / sqrt(eps[i+1] * mu[i+1]);
+end
 
 end
