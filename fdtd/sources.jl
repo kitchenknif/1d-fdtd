@@ -1,6 +1,7 @@
 include("globals.jl")
 
 module sources
+using globals;
 
 function hard_gaussian_source!(ez, pos, time, delay=30., width=100.)
     ez[pos] = exp(-(time - delay) * (time - delay) / width);
